@@ -11,12 +11,18 @@ exports.register = async (req, res) => {
   try {
     const { nom, email, motDePasse, telephone } = req.body;
 
+    if (!nom || !email || !motDePasse) {
+      return res.status(400).json({ success: false, message: 'Nom, email et mot de passe requis' });
+    }
+
     const existeDeja = await User.findOne({ email });
     if (existeDeja) {
       return res.status(400).json({ success: false, message: 'Email déjà utilisé' });
     }
 
-    const user = await User.create({ nom, email, motDePasse, telephone });
+    const user = new User({ nom, email, motDePasse, telephone });
+    await user.save();
+
     const token = genererToken(user._id);
 
     res.status(201).json({
@@ -26,6 +32,7 @@ exports.register = async (req, res) => {
       user: { id: user._id, nom: user.nom, email: user.email, telephone: user.telephone },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
@@ -58,6 +65,7 @@ exports.login = async (req, res) => {
       user: { id: user._id, nom: user.nom, email: user.email, telephone: user.telephone },
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: err.message });
   }
 };

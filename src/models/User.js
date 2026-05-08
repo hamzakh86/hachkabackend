@@ -40,10 +40,10 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hasher le mot de passe avant sauvegarde
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('motDePasse')) return next();
-  this.motDePasse = await bcrypt.hash(this.motDePasse, 12);
-  next();
+userSchema.pre('save', async function() {
+  if (!this.isModified('motDePasse')) return;
+  const salt = await bcrypt.genSalt(10);
+  this.motDePasse = await bcrypt.hash(this.motDePasse, salt);
 });
 
 // Comparer les mots de passe
