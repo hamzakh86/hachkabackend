@@ -44,6 +44,10 @@ const commandeSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  pointsGagnes: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

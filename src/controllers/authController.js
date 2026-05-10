@@ -79,3 +79,58 @@ exports.getMe = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// @PUT /api/auth/update
+exports.updateMe = async (req, res) => {
+  try {
+    const { nom, email, telephone } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { nom, email, telephone },
+      { new: true, runValidators: true }
+    );
+    res.json({ success: true, message: 'Profil mis à jour', user });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// @PUT /api/auth/change-password
+exports.changePassword = async (req, res) => {
+  try {
+    const { ancienMotDePasse, nouveauMotDePasse } = req.body;
+
+    if (!ancienMotDePasse || !nouveauMotDePasse) {
+      return res.status(400).json({ success: false, message: 'Tous les champs sont requis' });
+    }
+
+    const user = await User.findById(req.user.id).select('+motDePasse');
+    
+    const correct = await user.comparerMotDePasse(ancienMotDePasse);
+    if (!correct) {
+      return res.status(401).json({ success: false, message: 'Ancien mot de passe incorrect' });
+    }
+
+    user.motDePasse = nouveauMotDePasse;
+    await user.save();
+
+    res.json({ success: true, message: 'Mot de passe mis à jour avec succès' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// @DELETE /api/auth/delete
+exports.deleteMe = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+    }
+    // Note: Optionally, delete associated orders here if necessary.
+    res.json({ success: true, message: 'Compte supprimé avec succès' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

@@ -33,6 +33,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  points: {
+    type: Number,
+    default: 0,
+  },
+  panier: [{
+    produit: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Produit',
+      required: true
+    },
+    taille: {
+      type: String,
+      required: true
+    },
+    quantite: {
+      type: Number,
+      required: true,
+      default: 1
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now,

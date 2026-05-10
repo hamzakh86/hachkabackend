@@ -15,6 +15,11 @@ app.use('/api/produits', require('./routes/produits'));
 app.use('/api/panier', require('./routes/panier'));
 app.use('/api/favoris', require('./routes/favoris'));
 app.use('/api/commandes', require('./routes/commandes'));
+app.use('/api/utilisateurs', require('./routes/utilisateurs'));
+app.use('/api/app-data', require('./routes/appData'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/newsletter', require('./routes/newsletter'));
+app.use('/api/coupons', require('./routes/coupons'));
 
 // Route test
 app.get('/', (req, res) => {
@@ -25,7 +30,7 @@ app.get('/', (req, res) => {
 mongoose.connect(MONGODB_URI)
   .then(() => {
     console.log('✅ MongoDB connecté !');
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
     });
   })
